@@ -1,0 +1,142 @@
+import pygame
+import random
+import os
+
+#Constance-game
+WIDTH = 800
+HEIGHT = 600
+FPS = 30
+GROUND = HEIGHT - 30
+#Constance-physics
+PLAYER_ACC = 0.9
+PLAYER_FRICTION = -0.12
+PLAYER_GRAV = 0.9
+vec = pygame.math.Vector2
+
+#difine color
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+
+#asset folders
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder,"img")
+
+#player class
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "sprite (1).jpg")).convert()
+        self.image.set_colorkey(WHITE)
+        self.image = pygame.transform.scale(self.image, (100, 150))
+        self.rect = self.image.get_rect()
+        #Gravity
+        self.pos = vec(10, GROUND - 60)
+        self.vel = vec(0, 0)
+        self.acc = vec(0, 0)
+       
+        self.rect.center = (WIDTH / 2, HEIGHT / 2)
+        self.y_speed = 5
+    def update(self):
+
+        #Gravity
+        self.acc = vec(0, PLAYER_GRAV)
+       
+        #returns A list, keystate, of all keys
+        keystate = pygame.key.get_pressed()
+
+        #checks to see which key were in the list (a.k.a. pressed)
+        if keystate[pygame.K_RIGHT]:
+            self.acc.x += PLAYER_ACC
+        if keystate[pygame.K_LEFT]:
+            self.acc.x += -PLAYER_ACC
+        if self.vel.y == 0 and keystate[pygame.K_SPACE]:
+            self.vel.y = -20
+           
+        #Apply Friction in the x directon
+        self.acc.x += self.vel.x * PLAYER_FRICTION
+       
+        #equal motion
+        self.vel += self.acc                    #v = v0 = at
+        self.pos += self.vel + 0.5 * self.acc   #s = s + v0t + 1/2at
+
+        #WRAP AROUND THE SIDES OF THE SCREEN
+        if self.pos.x > WIDTH:
+            self.pos.x = 0
+        if self.pos.x < 0:
+            self.pos.x = WIDTH
+           
+        #SIMULATE THE GROUND
+        if self.pos.y > GROUND:
+            self.pos.y = GROUND + 1
+            self.vel.y = 0
+           
+         
+        #SET THE NEW PLAYER POSITON BASED ON ABOVE
+        self.rect.midbottom = self.pos
+#platform
+class Platform(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "Brick_Block.png")).convert()
+        self.image = pygame.transform.scale(self.image, (150, 100))
+        #self.image = pygame.Surface((100, 25))
+        #self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.x = 10
+        self.rect.y = HEIGHT - 120
+
+    def update(self):
+        self.rect.x  += -5
+        if self.rect.right < 0:
+            self.rect.left = WIDTH
+#iniitialize varables
+pygame.init()
+pygame.mixer.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("My Game")
+
+clock = pygame.time.Clock()
+
+#background
+bkgr_image = pygame.image.load(os.path.join(img_folder, "background.jpg")).convert()
+background = pygame.transform.scale(bkgr_image, (WIDTH, HEIGHT))
+background_rect = background.get_rect()
+                                   
+#sprite groups
+all_sprites = pygame.sprite.Group()
+player = Player()
+all_sprites.add(player)
+
+#Plateform Class
+platform = Platform()
+all_sprites.add(platform)
+
+#game loop
+#process events
+#   update
+#   draw
+running = True
+while running:
+
+    clock.tick(FPS)
+
+
+    #process events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    #update
+    all_sprites.update()
+
+    #draw
+    screen.blit(background, background_rect)
+    all_sprites.draw(screen)
+
+    #flip after drawing
+    pygame.display.flip()
+
+pygame.quit()
