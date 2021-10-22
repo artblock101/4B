@@ -1,0 +1,98 @@
+import random
+import time
+
+
+def printText(sentence):
+    for char in sentence:
+        print(char, end='', flush=True)
+        time.sleep(.03)
+    print()
+
+
+#Title
+printText("---------------------------")
+printText("***Cool Game Name***")
+printText("---------------------------")
+
+
+#introductions
+printText("Hello there today you will become a cool hero")
+printText("")
+name = input("Your Superhero name >>").lower()
+printText("")
+printText("But first tell me a little about yourself "+ name)
+printText("")
+
+
+#varables
+superpower = input("So whats your Superpower >>").lower()
+printText("")
+attack1 = input("So what is one attack you use >>").lower()
+printText("")
+attackdamage1 = input("how strong is this attack? *1-10* >>").lower()
+printText("")
+attack2 = input("Whats another attack you have >>").lower()
+printText("")
+attackdamage2 = input("how strong is this attack? *1-10* ").lower()
+printText("")
+attack3 = input("Ok now tell me your last attack >>").lower()
+printText("")
+attackdamage3 =input("ok finally you know the drill how strong is this attack? >>").lower()
+printText("")
+
+
+#introductions
+printText("Ok "+ name +" I know a little bit about you")
+printText("")
+printText("Im confident you can surive this job")
+printText("")
+
+
+#Jurney starts
+printText("---------------------------")
+printText("First Task:")
+printText("The Supervillain *dr. cool name*")
+printText("is robbing the bank")
+
+
+#battle
+printText("---------------------------")
+printText("Directions: you need to use your attacks to bring his health bar to 0")
+printText("")
+printText("due to you surrounding you have to use your first attack")
+
+Att = (attackdamage1)
+OpAtt = 4
+OpHP = 100
+player_health = 250
+
+print("Player health: ", player_health)
+printText("")
+
+
+enemy_health = 400
+print("Enemy health:", enemy_health)
+
+
+while True:
+  player_attack = (attackdamage1)
+  print("Player deals", player_attack, "DAMAGE!!!")
+  enemy_health -= player_attack
+  print("Enemy health is now: ", enemy_health)
+  if enemy_health <= 0:
+     break
+
+
+  enemy_attack = random.randint(36,100)
+  print("enemy deals", enemy_attack, "DAMAGE!!!")
+  player_health -= enemy_attack
+  print("player health is now: ", player_health)
+  if player_health < 0:
+      break
+
+
+printText("THE BATTLE ENDED")
+printText("player health:",)
+print (player_health) 
+printText("enemy health:", )
+print (enemy_health)
